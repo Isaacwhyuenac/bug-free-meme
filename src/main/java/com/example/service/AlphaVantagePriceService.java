@@ -82,7 +82,7 @@ public class AlphaVantagePriceService {
 
     BigDecimal period = BigDecimal.valueOf(365).divide(BigDecimal.valueOf(days), MathContext.DECIMAL128);
 
-    LocalDate minLocalDate = DayUtils.shiftDate(fromDate);
+    LocalDate minLocalDate = DayUtils.shiftBeforeDate(fromDate);
     LocalDate maxLocalDate = DayUtils.shiftBeforeDate(toDate);
 
 //    // Check if the response from the market API contains our day
