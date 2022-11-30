@@ -19,6 +19,12 @@ public class StockPriceController {
 
   private final AlphaVantagePriceService alphaVantagePriceService;
 
+  /**
+   *
+   * @param symbol
+   * @param allParams
+   * @return
+   */
   @GetMapping("/stock/{symbol}")
   public Mono<StockResponse> getPositionAndMarketValue(
     @PathVariable String symbol,
