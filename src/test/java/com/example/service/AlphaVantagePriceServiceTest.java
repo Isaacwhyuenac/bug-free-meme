@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.example.domain.AlphaVantageTimeSeriesDailyJson;
 import com.example.domain.StockResponse;
-import com.example.exeption.NotMarketDateException;
+import com.example.exception.NotMarketDateException;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)

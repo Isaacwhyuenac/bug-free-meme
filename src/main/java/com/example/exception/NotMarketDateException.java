@@ -1,4 +1,4 @@
-package com.example.exeption;
+package com.example.exception;
 
 
 public class NotMarketDateException extends Exception {

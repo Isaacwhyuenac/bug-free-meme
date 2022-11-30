@@ -2,9 +2,7 @@ package com.example.service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -19,7 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.domain.AlphaVantageTimeSeriesDailyJson;
 import com.example.domain.StockResponse;
-import com.example.exeption.NotMarketDateException;
+import com.example.exception.NotMarketDateException;
 import com.example.utils.DayUtils;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
