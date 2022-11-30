@@ -16,6 +16,7 @@ public class WebClientConfig {
   public WebClient webClient() {
     HttpClient httpClient = HttpClient.create()
       .responseTimeout(Duration.ofMinutes(1));
+
     WebClient webClient = WebClient.builder()
       .clientConnector(new ReactorClientHttpConnector(httpClient))
       .exchangeStrategies(ExchangeStrategies
@@ -25,6 +26,7 @@ public class WebClientConfig {
           .maxInMemorySize(1000 * 1024 * 1024))
         .build())
       .build();
+
     return webClient;
   }
 }

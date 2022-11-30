@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.domain.ApiError;
 import com.example.exeption.NotMarketDateException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalControllerExceptionHandler  {
 
   @ExceptionHandler(value = {NotMarketDateException.class})
-  public ResponseEntity handleException(NotMarketDateException ex, WebRequest request) {
-    log.info("==========handler==============");
-    log.info(ex.getMessage());
-    han
-    return ResponseEntity.badRequest().body(ex.getMessage());
+  public ResponseEntity<ApiError> handleException(Exception ex) {
+    return ResponseEntity.badRequest().body(new ApiError(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
   }
 
 }

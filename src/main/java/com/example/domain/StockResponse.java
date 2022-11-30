@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
