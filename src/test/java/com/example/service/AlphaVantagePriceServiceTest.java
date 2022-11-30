@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.example.domain.AlphaVantageTimeSeriesDailyJson;
 import com.example.domain.StockResponse;
-import com.example.exception.NotMarketDateException;
+import com.example.exception.InvalidDateInputException;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -44,7 +44,7 @@ class AlphaVantagePriceServiceTest {
   }
 
   @Test
-  public void testGetLatestClosingPriceWithFrom() throws IOException, NotMarketDateException {
+  public void testGetLatestClosingPriceWithFrom() throws IOException, InvalidDateInputException {
     AlphaVantageTimeSeriesDailyJson alphaVantageTimeSeriesDailyJson = jacksonTester.readObject(new ClassPathResource("ibm.json"));
 
     Map<String, String> map = new HashMap<>();
@@ -59,7 +59,7 @@ class AlphaVantagePriceServiceTest {
   }
 
   @Test
-  public void testGetLatestClosingPriceWithTo() throws IOException, NotMarketDateException {
+  public void testGetLatestClosingPriceWithTo() throws IOException, InvalidDateInputException {
     AlphaVantageTimeSeriesDailyJson alphaVantageTimeSeriesDailyJson = jacksonTester.readObject(new ClassPathResource("ibm.json"));
 
     Map<String, String> map = new HashMap<>();

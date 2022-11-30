@@ -17,7 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.domain.AlphaVantageTimeSeriesDailyJson;
 import com.example.domain.StockResponse;
-import com.example.exception.NotMarketDateException;
+import com.example.exception.InvalidDateInputException;
 import com.example.utils.DayUtils;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
@@ -54,7 +54,7 @@ public class AlphaVantagePriceService {
         public void accept(AlphaVantageTimeSeriesDailyJson alphaVantageTimeSeriesDailyJson, SynchronousSink<StockResponse> sink) {
           try {
             sink.next(getLatestClosingPrice(alphaVantageTimeSeriesDailyJson, allParams));
-          } catch (NotMarketDateException e) {
+          } catch (InvalidDateInputException e) {
             System.out.println("======services=========");
             sink.error(e);
           }
@@ -62,7 +62,7 @@ public class AlphaVantagePriceService {
       });
   }
 
-  StockResponse getLatestClosingPrice(AlphaVantageTimeSeriesDailyJson json, Map<String, String> allParams) throws NotMarketDateException {
+  StockResponse getLatestClosingPrice(AlphaVantageTimeSeriesDailyJson json, Map<String, String> allParams) throws InvalidDateInputException {
     String from = allParams.get("from");
     String to = allParams.get("to");
 
@@ -73,6 +73,10 @@ public class AlphaVantagePriceService {
 
     LocalDate fromDate = StringUtils.hasText(from) ? LocalDate.parse(from) : dates.stream().min(Comparator.comparing(LocalDate::toEpochDay)).get();
     LocalDate toDate = StringUtils.hasText(to) ? LocalDate.parse(to) : dates.stream().max(Comparator.comparing(LocalDate::toEpochDay)).get();
+
+    if (fromDate.isAfter(toDate)) {
+      throw new InvalidDateInputException("from cannot be after to");
+    }
 
     long days = ChronoUnit.DAYS.between(fromDate, toDate);
 
