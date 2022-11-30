@@ -11,7 +11,7 @@ docker run -p 8080:8080 yourimagename
 
 ## Assumption
 
-If a user is querying "from" and "to" on Saturday and Sunday, our API will get the closing price on the Friday before the day while the period will still include the day.
+If a user is querying "from" and "to" on Saturday and Sunday, our API will get the closing price on the Friday before the day provided while the period will still include the day.
 
 ## Example Commands to Test
 
