@@ -11,6 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,12 +35,17 @@ public class AlphaVantagePriceService {
   @Value("${alphavantage.api.key}")
   private String apiKey;
 
+  @Value("${alphavantage.api.url}")
+  private String url;
+
   private final WebClient webClient;
 
   public Mono<StockResponse> get(String symbol, Map<String, String> allParams) {
-    log.info(symbol);
 
-    return webClient.get().uri("https://www.alphavantage.co/query",
+    log.info(symbol);
+    log.info(url);
+
+    return webClient.get().uri(url,
         uriBuilder -> uriBuilder
           .queryParam("function", "TIME_SERIES_DAILY_ADJUSTED")
           .queryParam("symbol", symbol)
@@ -48,6 +54,9 @@ public class AlphaVantagePriceService {
           .build()
       )
       .retrieve()
+      .onStatus(HttpStatus::is5xxServerError, clientResponse -> {
+        return Mono.error(new Exception("alpha vantage api returns 5xx"));
+      })
       .bodyToMono(AlphaVantageTimeSeriesDailyJson.class)
       .handle(new BiConsumer<AlphaVantageTimeSeriesDailyJson, SynchronousSink<StockResponse>>() {
         @Override
@@ -55,19 +64,20 @@ public class AlphaVantagePriceService {
           try {
             sink.next(getLatestClosingPrice(alphaVantageTimeSeriesDailyJson, allParams));
           } catch (InvalidDateInputException e) {
-            System.out.println("======services=========");
+            log.error(e.getMessage(), e);
+
             sink.error(e);
           }
         }
       });
   }
 
+  // package private
   StockResponse getLatestClosingPrice(AlphaVantageTimeSeriesDailyJson json, Map<String, String> allParams) throws InvalidDateInputException {
     String from = allParams.get("from");
     String to = allParams.get("to");
-
-    log.info("from " + from);
-    log.info("to " + to);
+    log.info("from {} ", from);
+    log.info("to {}", to);
 
     List<LocalDate> dates = json.getDaily().keySet().stream().map(LocalDate::parse).collect(Collectors.toList());
 
@@ -84,15 +94,6 @@ public class AlphaVantagePriceService {
 
     LocalDate minLocalDate = DayUtils.shiftBeforeDate(fromDate);
     LocalDate maxLocalDate = DayUtils.shiftBeforeDate(toDate);
-
-//    // Check if the response from the market API contains our day
-//    if (json.getDaily().get(minLocalDate.toString()) == null) {
-//      throw new NotMarketDateException(minLocalDate + " is not a market date");
-//    }
-//    // Check if the response from the market API contains our day
-//    if (json.getDaily().get(maxLocalDate.toString()) == null) {
-//      throw new NotMarketDateException(maxLocalDate + " is not a market date");
-//    }
 
     String startClosingPrice = json.getDaily().get(minLocalDate.toString()).getClosingPrice();
     String endClosingPrice = json.getDaily().get(maxLocalDate.toString()).getClosingPrice();
