@@ -1,6 +1,7 @@
 alphavantage:
   api:
     key: NN2E3WQP66461VB6
+    url: https://www.alphavantage.co/query
 server:
   error:
     whitelabel:

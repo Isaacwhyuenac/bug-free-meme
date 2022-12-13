@@ -54,8 +54,14 @@ public class AlphaVantagePriceService {
           .build()
       )
       .retrieve()
-      .onStatus(HttpStatus::is5xxServerError, clientResponse -> {
-        return Mono.error(new Exception("alpha vantage api returns 5xx"));
+      .onStatus(HttpStatus::isError, response -> {
+        if (response.statusCode().is5xxServerError()) {
+          log.error("error status is 5xx {}", response.bodyToMono(String.class));
+          return Mono.error(new Exception("alpha vantage api returns 5xx"));
+        }
+        log.error("error status is {} response body = {}", response.statusCode(), response.bodyToMono(String.class));
+
+        return Mono.error(new Exception("Error Occurred"));
       })
       .bodyToMono(AlphaVantageTimeSeriesDailyJson.class)
       .handle(new BiConsumer<AlphaVantageTimeSeriesDailyJson, SynchronousSink<StockResponse>>() {
