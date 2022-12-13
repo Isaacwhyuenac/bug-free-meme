@@ -19,6 +19,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.example.domain.AlphaVantageTimeSeriesDailyJson;
 import com.example.domain.StockResponse;
 import com.example.exception.InvalidDateInputException;
+import com.example.utils.Constants;
 import com.example.utils.DayUtils;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
@@ -80,10 +81,10 @@ public class AlphaVantagePriceService {
 
   // package private
   StockResponse getLatestClosingPrice(AlphaVantageTimeSeriesDailyJson json, Map<String, String> allParams) throws InvalidDateInputException {
-    String from = allParams.get("from");
-    String to = allParams.get("to");
-    log.info("from {} ", from);
-    log.info("to {}", to);
+    String from = allParams.get(Constants.FROM_QUERY_PARAM);
+    String to = allParams.get(Constants.TO_QUERY_PARAM);
+    log.info("{} {} ", Constants.FROM_QUERY_PARAM, from);
+    log.info("{} {}", Constants.TO_QUERY_PARAM, to);
 
     List<LocalDate> dates = json.getDaily().keySet().stream().map(LocalDate::parse).collect(Collectors.toList());
 
